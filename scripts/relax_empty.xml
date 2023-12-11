@@ -1,0 +1,11 @@
+<ROSETTASCRIPTS>
+
+	<MOVERS>
+		<FastRelax name="fast_relax" repeats="5"/>
+	</MOVERS>
+
+	<PROTOCOLS>
+		<Add mover_name="fast_relax"/>
+	</PROTOCOLS>
+	
+</ROSETTASCRIPTS>
