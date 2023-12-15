@@ -1,8 +1,6 @@
 #!/bin/bash
 
 BCLCONF=/opt/bcl-4.3.0-Linux-x86_64
-source /opt/pip-env/bin/activate
-
 
 # conformer generation is conducted by separated script
 files=()
