@@ -5,7 +5,7 @@ source /opt/pip-env/bin/activate  # activate python environment
 SCRIPTS=/workspace/RosettaCode/scripts  # RosettaCode/scripts path
 
 # ligand preparation
-bash ${SCRIPTS}/ConformerGenerator.sh
+bash ConformerGenerator.sh
 
 # protein preparation
 bash ${SCRIPTS}/prepare_protein.sh -p input_protein/2yfe_protein.pdb -e
@@ -42,10 +42,11 @@ for P in input_ligand/*.sdf; do
         rm ligand_chain_X.*
         rm $P2
     done
+    rm ${P}_*.sdf
 done
 
 # score parse and selection
-bash ${SCRIPTS}sc_parser.sh output
+bash ${SCRIPTS}/sc_parser.sh output
 python3 ${SCRIPTS}/select_score.py \
     --score_path "output" \
     --criteria "interface" \

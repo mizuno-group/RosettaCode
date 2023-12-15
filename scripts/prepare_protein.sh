@@ -38,7 +38,7 @@ do
 done
 
 if $E_ARG; then
-    mpirun -np 10 ${ROSETTA}/bin/rosetta_scripts.mpi.linuxgccrelease \
+    mpirun -np 10 --allow-run-as-root ${ROSETTA}/bin/rosetta_scripts.mpi.linuxgccrelease \
         -s ${P_ARG%.*}.pdb \
         -parser:protocol ${SCRIPTS}/relax_empty.xml \
         -out:suffix _relax \
@@ -53,7 +53,7 @@ else
     center=(${center//,/ })
     cat ${P_ARG} ${L_ARG} > ${P_ARG%.*}_relax.pdb
 
-    mpirun -np 10 ${ROSETTA}/bin/rosetta_scripts.mpi.linuxgccrelease \
+    mpirun -np 10 --allow-run-as-root ${ROSETTA}/bin/rosetta_scripts.mpi.linuxgccrelease \
         -s ${P_ARG%.*}_relax.pdb \
         -in:file:extra_res_fa ${L_ARG%.*}.params \
         -parser:protocol ${SCRIPTS}/relax.xml \
