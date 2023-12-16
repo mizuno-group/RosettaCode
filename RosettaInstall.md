@@ -63,3 +63,8 @@ python3 setup.py build install --home=$prefix --install-lib=$modules --install-s
 - pythonモジュールとしてのpymolを使用したい場合は、pymol/modulesにPYTHONPATHを通す
 - Docker内でビルドする際に、ft2build.hが見つからないエラーが起こる場合は、CPATHに`/usr/include/freetype2`を追加しておく
 
+## Dockerを使う場合
+本レポジトリの`Docker`ディレクトリ内に以下のファイルを揃えてビルドする
+- rosetta_bin_linux_<version>_bundle.tgz
+- bcl-4.3.0-Linux-x86_64.sh
+- bcl.license

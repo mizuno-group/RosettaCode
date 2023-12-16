@@ -34,7 +34,7 @@ for P in input_ligand/*.sdf; do
             -packing:ex2 \
             -packing:no_optH \
             -packing:flip_HNQ \
-            -parser:protocol dock_temp.xml \
+            -parser:protocol dock.xml \
             -overwrite \
             -mistakes:restore_pre_talaris_2013_behavior true \
             -nstruct 50 \
