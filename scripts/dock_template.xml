@@ -1,0 +1,73 @@
+<ROSETTASCRIPTS>
+
+	<SCOREFXNS>
+		<ScoreFunction name="ligand_soft_rep" weights="ligand_soft_rep">
+		</ScoreFunction>
+		<ScoreFunction name="hard_rep" weights="ligand"> <!-- for repacking -->>
+		</ScoreFunction>
+	</SCOREFXNS>
+
+	<LIGAND_AREAS>
+		<!-- cutoff : Cβ からの最大距離
+				add_nbr_radius : ligand neighbor atomの半径に応じてcutoffを増やす
+				all_atom_mode : 全てのligand原子がcutoff内に存在する
+				Calpha_restraints : ligand torsion の標準偏差、正ならflexibilityを認める
+		-->
+		<LigandArea name="inhibitor_dock_sc" chain="X" cutoff="6.0" add_nbr_radius="true" all_atom_mode="false"/>
+		<LigandArea name="inhibitor_final_sc" chain="X" cutoff="6.0" add_nbr_radius="true" all_atom_mode="false"/>
+		<LigandArea name="inhibitor_final_bb" chain="X" cutoff="7.0" add_nbr_radius="false" all_atom_mode="true" Calpha_restraints="0.3"/>
+	</LIGAND_AREAS>
+
+	<INTERFACE_BUILDERS>
+		<!-- protein-ligand interface に関与する残基を規定する 
+				extension_window : interface residues を near residues で囲む距離？　backboneの最適化に重要 
+		-->
+		<InterfaceBuilder name="side_chain_for_docking" ligand_areas="inhibitor_dock_sc"/>
+		<InterfaceBuilder name="side_chain_for_final" ligand_areas="inhibitor_final_sc"/>
+		<InterfaceBuilder name="backbone" ligand_areas="inhibitor_final_bb" extension_window="3"/>
+	</INTERFACE_BUILDERS>
+
+	<MOVEMAP_BUILDERS>
+		<!-- movemap を構築。2×N のテーブルで、各残基のbbとscを動かすかを規定する。
+				sc_interface : InterfaceBuilder を選択
+				bb_interface : backbone minimizationを規定。不要なら書かない
+				minimize_water : 水分子もdockingに含める場合に必要 
+		-->
+		<MoveMapBuilder name="docking" sc_interface="side_chain_for_docking" minimize_water="false"/>
+		<MoveMapBuilder name="final" sc_interface="side_chain_for_final" bb_interface="backbone" minimize_water="false"/>
+	</MOVEMAP_BUILDERS>
+
+	<SCORINGGRIDS ligand_chain="X" width="15">
+		<!-- Grid の指定 -->
+		<ClassicGrid grid_name="classic" weight="1.0"/>
+	</SCORINGGRIDS>
+
+	<MOVERS>
+		<!-- mover を規定 -->
+		<!-- Transform : monte carlo search により docking を行う
+			box_size : 初期配座からリガンドが動ける距離
+			move_distance : 1ステップあたり最大移動距離
+			angle : 1ステップあたり最大回転角
+			cycle : monte carlo search 試行数
+			repeats : monte carlo search 繰返し回数
+			temperature : ボルツマン温度。5がいいらしい -->>
+		<Transform name="transform" chain="X" box_size="7.0" move_distance="0.2" angle="20" cycles="500" repeats="1" temperature="5"/>
+		<!-- HighResDocker : 小さい摂動を加えて最適化
+			repack_every_Nth : Nサイクルごとに側鎖を最適化 -->
+		<HighResDocker name="high_res_docker" cycles="6" repack_every_Nth="3" scorefxn="ligand_soft_rep" movemap_builder="docking"/>
+		<!-- FinalMinimizer : 最終配座決定のための最適化 -->
+		<FinalMinimizer name="final" scorefxn="hard_rep" movemap_builder="final"/>
+		<!-- InterfaceScoreCalculator : 各ligandのスコアを算出して出力 -->
+		<InterfaceScoreCalculator name="add_scores" chains="X" scorefxn="hard_rep" native="crystal_complex.pdb"/> 
+	</MOVERS>
+
+	<PROTOCOLS>
+		<!-- docking の流れを規定 -->
+		<Add mover_name="transform"/>
+		<Add mover_name="high_res_docker"/>
+		<Add mover_name="final"/>
+		<Add mover_name="add_scores"/>
+	</PROTOCOLS>
+
+
+</ROSETTASCRIPTS>

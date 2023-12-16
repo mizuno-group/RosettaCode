@@ -1,0 +1,15 @@
+<ROSETTASCRIPTS>
+
+	<MOVERS>
+		<StartFrom name="start" chain="X">
+			<Coordinates x="%%x%%" y="%%y%%" z="%%z%%"/>
+		</StartFrom>
+		<FastRelax name="fast_relax" repeats="5"/>
+	</MOVERS>
+
+	<PROTOCOLS>
+		<Add mover_name="start"/>
+		<Add mover_name="fast_relax"/>
+	</PROTOCOLS>
+	
+</ROSETTASCRIPTS>
